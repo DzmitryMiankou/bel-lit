@@ -2,26 +2,25 @@ import React from "react";
 import styled from "styled-components";
 
 const data = [
-  { name: "Адам Міцкевіч" },
-  { name: "Ян Баршчэўскі" },
-  { name: "Вінцэнт Дунін-Марцінкевіч" },
-  { name: "Элаіза Пашкевіч (Цётка)" },
-  { name: "Янка Купала" },
-  { name: "Якуб Колас" },
-  { name: "Францішак Багушэвіч" },
-  { name: "Максім Багдановіч" },
+  { name: "Адам Міцкевіч", bg: "#BC5D58", born: 1798 },
+  { name: "Ян Баршчэўскі", bg: "#CB4154", born: 1794 },
+  { name: "Вінцэнт Дунін-Марцінкевіч", bg: " #781F19", born: 1808 },
+  { name: "Алаіза Пашкевіч (Цётка)", bg: "#aa2436", born: 1876 },
+  { name: "Янка Купала", bg: "#C51D34", born: 1882 },
+  { name: "Якуб Колас", bg: "#962130", born: 1882 },
+  { name: "Францішак Багушэвіч", bg: "#C51D34", born: 1840 },
+  { name: "Максім Багдановіч", bg: "#642424", born: 1891 },
 ];
 
-const Body = styled.div<{ $height: number }>`
+const Body = styled.div`
   max-width: 2500px;
   margin: auto;
-  height: ${(props) => props.$height + "px"};
+  height: 100vh;
 `;
 
 const Items = styled.div`
   background-color: rgb(120, 255, 255);
-  display: flex;
-  gap: 1px;
+  height: calc(100vh - 50px);
   overflow-x: scroll;
   position: sticky;
   position: -webkit-sticky;
@@ -33,22 +32,25 @@ const Items = styled.div`
   }*/
 `;
 
+const start = 1790;
+const end = 1956;
+
 const Line = styled.div`
   background-color: #00000080;
   position: absolute;
   bottom: 0;
   display: flex;
-  gap: 30px;
 `;
 
-const Item = styled.div`
+const Item = styled.div<{ $bg: string; $born: number }>`
   list-style: none;
   background-color: #8c000061;
-  padding: 50px;
-  height: calc(100vh - 70px);
-  min-width: 500px;
-  width: 100%;
+  min-width: 1270px;
   position: relative;
+  margin-left: ${(props) => (props.$born - start) * 60 + "px"};
+  cursor: pointer;
+  background-color: ${(props) => props.$bg};
+  font-size: 10px;
 `;
 
 const Header = styled.header`
@@ -60,17 +62,17 @@ const Header = styled.header`
   width: 100%;
 `;
 
-const start = 1797;
-const end = 1956;
-const countEl = end - start;
-
 const HeaderWrapper = styled.div`
   max-width: 2500px;
   margin: auto;
 `;
 
+const Year = styled.div`
+  width: 60px;
+  text-align: center;
+`;
+
 const App: React.FC = () => {
-  const [size, setSize] = React.useState<number>(0);
   const navRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -82,19 +84,16 @@ const App: React.FC = () => {
     if (navRef.current) {
       const whattype = navRef.current;
       window.addEventListener("wheel", (e) => handler(e, whattype));
-      setSize(navRef.current.scrollWidth);
-      //navRef.current.scrollLeft += scrollTop;
       return () =>
         window.removeEventListener("wheel", (e) => handler(e, whattype));
     }
-  }, [size]);
+  }, []);
 
   const arr: Array<number> = [];
   let i: number = 0;
   for (let index = start; index < end; index++) {
     i += 1;
     arr.push(start + i);
-    console.log(start + i);
   }
 
   return (
@@ -106,16 +105,23 @@ const App: React.FC = () => {
           </ul>
         </HeaderWrapper>
       </Header>
-      <Body $height={size}>
+      <Body>
         <Items ref={navRef}>
           <Line>
             {arr.map((data, i) => (
-              <div key={i}>{data}</div>
+              <Year
+                key={i}
+                style={{ backgroundColor: data % 2 === 0 ? "#8c00002b" : "" }}
+              >
+                {data}
+              </Year>
             ))}
           </Line>
           <>
-            {data.map(({ name }) => (
-              <Item key={name}>{name}</Item>
+            {data.map(({ name, bg, born }) => (
+              <Item key={name} $bg={bg} $born={born}>
+                {name}
+              </Item>
             ))}
           </>
         </Items>
